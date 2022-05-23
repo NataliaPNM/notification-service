@@ -1,0 +1,38 @@
+server:
+  port: '9090'
+mail:
+  debug: 'true'
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/notification-service'
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  sql:
+    init:
+      mode: always
+  application:
+    name: user-identity
+  mail:
+    protocol: smtps
+    host: smtp.yandex.ru
+    port: 465
+    username: ttnpnm
+    password: slcadmocweblqndu
+  kafka:
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      group-id: app.1
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    bootstrap-servers: localhost:9092
+
