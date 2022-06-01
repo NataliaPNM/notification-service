@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConfirmDto {
-    private String confirmationCode;
+public class ConfirmationCodeRequestDto {
+    private String codeType;
     private UUID userId;
 }

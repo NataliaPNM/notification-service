@@ -1,4 +1,4 @@
-package com.example.notificationservice.email;
+package com.example.notificationservice.service;
 
 import com.example.notificationservice.model.User;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,13 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserService {
-    private static final String USERS_URL_TEMPLATE = "/users";
+public class UserConfigurationWeBclient {
+    private static final String USERS_URL_TEMPLATE = "/user/contact";
     private static final String BROKEN_URL_TEMPLATE = "/broken-url/{id}";
     public static final int DELAY_MILLIS = 100;
     public static final int MAX_RETRY_ATTEMPTS = 3;
@@ -29,22 +30,14 @@ public class UserService {
                 .bodyToMono(User.class);
     }
 
-    public User getUserByIdSync(final Long userId) {
+    public User getUserByIdSync(final UUID userId) {
         return webClient
-                .get()
-                .uri(uriBuilder -> uriBuilder.path(USERS_URL_TEMPLATE).queryParam("userId",userId).build())
-                .retrieve()
+                .post()
+                .uri(uriBuilder -> uriBuilder.path(USERS_URL_TEMPLATE).build())
+                .bodyValue(userId).retrieve()
                 .bodyToMono(User.class)
                 .block();
     }
-//    public User getUserByIdSync(final Long userId) {
-//        return webClient
-//                .get()
-//                .uri(USERS_URL_TEMPLATE, userId)
-//                .retrieve()
-//                .bodyToMono(User.class)
-//                .block();
-//    }
 
     public User getUserWithRetry(final String id) {
         return webClient

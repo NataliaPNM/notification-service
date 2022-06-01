@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface CodeRepository  extends JpaRepository<ConfirmationCode,Long> {
-    Optional<ConfirmationCode> findByUserId(Long userId);
+public interface CodeRepository  extends JpaRepository<ConfirmationCode, UUID> {
+    Optional<ConfirmationCode> findByUserId(UUID userId);
 }

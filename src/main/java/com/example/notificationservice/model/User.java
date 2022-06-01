@@ -2,9 +2,11 @@ package com.example.notificationservice.model;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class User {
-    private Long id;
+    private UUID id;
     private String email;
     private Long phone;
 }
