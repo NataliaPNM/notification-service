@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  user-identity-service:
+  notification-service:
     image: $DOCKER_REGISTRY_NAME/$PROJECT_NAME:dev
     ports:
       - 9090:9090
