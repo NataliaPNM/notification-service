@@ -23,7 +23,7 @@ cache:
 
 test:
   stage: test
-  image: 3.8-eclipse-temurin-17-alpine
+  image: maven:3.8-jdk-17
   script:
     - 'mvn $MAVEN_CLI_OPTS test'
   artifacts:
@@ -57,7 +57,7 @@ test:
 # For `master` branch run `mvn deploy` automatically.
 build:
   stage: build
-  image: 3.8-eclipse-temurin-17-alpine
+  image: maven:3.8-jdk-17
   script:
     - 'mvn $MAVEN_CLI_OPTS package'
   only:
