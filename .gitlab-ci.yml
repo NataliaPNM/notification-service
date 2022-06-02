@@ -108,7 +108,7 @@ deploy:
     - build-docker
   environment:
     name: develop
-    url: http://10.10.14.29:8088
+    url: http://10.10.14.29:9090
 
   tags:
     - "backend"

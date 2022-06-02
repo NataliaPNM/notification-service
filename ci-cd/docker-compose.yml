@@ -3,7 +3,7 @@ services:
   user-identity-service:
     image: $DOCKER_REGISTRY_NAME/$PROJECT_NAME:dev
     ports:
-      - 8088:80
+      - 9090:9090
     environment:
        eureka.client.service-url.defaultZone: http://discovery-service:8761/eureka/
     restart: always
