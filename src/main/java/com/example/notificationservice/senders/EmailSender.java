@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -23,8 +21,11 @@ public class EmailSender implements Sender {
     @Override
     public String sendCode(String emailTo, String code) throws IOException {
         Properties props = new Properties();
-        props.load(new FileInputStream(new File("src/main/resources/email.properties")));
         if (session == null) {
+            props.put("mail.smtp.auth","true");
+            props.put("mail.smtp.protocol","smtps");
+            props.put("mail.smtp.host","smtp.yandex.ru");
+            props.put(" mail.smtp.port","465");
             session = Session.getInstance(props,
                     new javax.mail.Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
