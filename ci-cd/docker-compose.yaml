@@ -5,9 +5,6 @@ services:
     ports:
       - 9090:9090
     environment:
-       SPRING_DATASOURCE_URL: 'jdbc:postgresql://psql-db:5432/notification_db'
-       SPRINT_DATASOURCE_USER: ${PSQL_USER} 
-       SPRING_DATASOURCE_PASSWORD: ${PSQL_PASSWORD}
        eureka.client.service-url.defaultZone: http://discovery-service:8761/eureka/
     restart: always
     logging:
