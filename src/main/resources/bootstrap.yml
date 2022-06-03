@@ -1,16 +1,16 @@
-spring:
-  application:
-    name: notification-service
-  cloud:
-    config:
-      enabled: true
-      uri: http://10.10.14.29:8087
-      username: notification-service
-      password: notification0106
-      fail-fast: true
-
-management:
-  endpoints:
-    web:
-    exposure:
-      include: refresh
+#spring:
+#  application:
+#    name: notification-service
+#  cloud:
+#    config:
+#      enabled: true
+#      uri: http://10.10.14.29:8087
+#      username: notification-service
+#      password: notification0106
+#      fail-fast: true
+#
+#management:
+#  endpoints:
+#    web:
+#    exposure:
+#      include: refresh
