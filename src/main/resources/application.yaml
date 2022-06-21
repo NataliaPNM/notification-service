@@ -1,4 +1,69 @@
+server:
+  error:
+    include-stacktrace: never
+  port: 9090
+
+---
 spring:
-  config:
-    import: optional:configserver:http://10.10.14.29:8087
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:postgresql://10.10.14.29:5432/notification_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
+
+webclient:
+  base_url: http://10.10.14.29:8090/
+
+email:
+  from:
+    address: green.bank@yandex.ru
+  sender:
+    username: green.bank
+    port: '465'
+    host: smtp.yandex.ru
+    password: dyycawyabbskxwme
+  debug: 'true'
+  smtp:
+    starttls:
+      enable: 'true'
+    auth: 'true'
+  transport:
+    protocol: smtps
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${eureka_url:http://10.10.14.29:8761/eureka}
+  instance:
+    hostname: 10.10.14.29
+    prefer-ip-address: true
+
+
+#eureka:
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+
+# slcadmocweblqndu
+#  instance:
+#    hostname: 10.10.14.29
+#    prefer-ip-address: true
+#
+#spring:
+#  config:
+#    import: optional:configserver:http://10.10.14.29:8087
+#
+#  '{cipher}AQBvD37IJ+x1LwAGpv11IRz06Nat30DYS7ovLWMI8csr8/xtwFT4Y/FW53mXzZdnY6MdqVum4xw84Mp+itpoYnJIYGt8aFj9bU1xtXr9f24h+SZxZLzqZ1TW16yGZuwpw3ncX9pHb9+YvL1lyKs9flZUmFkpC/7pjSApDVNgBCz/9RfmdwyBdhLBajzYfzZCQV1F1s+T4OmnCaeV2dc3qs3ACfOTFZOMaPhy8LFlr2UHfkYcR3LedKqT8oMmw2wwuSp+JS5VSJFFrVvtJlSpCAP1UObBzFiSiy7BroLQy99+X9Tjx2m2Wv6rz4o6r3IRDn5sSP0g4W/zUTxMXiNTuJg/POTo3WkEBwkjGhty8e+iS9hyvTIH1pzHrFu7XBIcmeM='
+#
 

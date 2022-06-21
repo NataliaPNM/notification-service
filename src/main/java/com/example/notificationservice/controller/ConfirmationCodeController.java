@@ -1,8 +1,8 @@
 package com.example.notificationservice.controller;
 
-import com.example.notificationservice.dro.ConfirmDto;
-import com.example.notificationservice.dro.ConfirmationCodeRequestDto;
-import com.example.notificationservice.service.CodeService;
+import com.example.notificationservice.dto.ConfirmDto;
+import com.example.notificationservice.dto.ConfirmationCodeRequestDto;
+import com.example.notificationservice.service.ConfirmationCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
@@ -14,20 +14,20 @@ import java.io.IOException;
 @RequestMapping("msg")
 @RequiredArgsConstructor
 @RefreshScope
-public class CodeController {
+public class ConfirmationCodeController {
 
-    private final CodeService codeService;
+    private final ConfirmationCodeService confirmationCodeService;
 
     @PostMapping("/sendCode")
     public String sendCode(@RequestBody ConfirmationCodeRequestDto codeRequestDto) throws IOException {
 
-        return codeService.sendCode(codeRequestDto);
-
+        return confirmationCodeService.sendCode(codeRequestDto);
     }
     @PostMapping("/confirm")
     public String confirmCode(@RequestBody ConfirmDto confirmDto){
 
-        return codeService.confirmCode(confirmDto);
+        return confirmationCodeService.confirmCode(confirmDto);
     }
+
 }
 

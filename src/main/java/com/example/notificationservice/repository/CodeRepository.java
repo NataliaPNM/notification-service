@@ -9,5 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface CodeRepository  extends JpaRepository<ConfirmationCode, UUID> {
-    Optional<ConfirmationCode> findByUserId(UUID userId);
+
+    Optional<ConfirmationCode> findByUserIdAndCodeType(UUID userId, String codeType);
+    Optional<ConfirmationCode> findByUserIdAndLockCode(UUID userId, boolean lockCode);
+
 }

@@ -3,6 +3,7 @@ package com.example.notificationservice.webclient;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -13,13 +14,14 @@ import reactor.netty.tcp.TcpClient;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class WebClientConfiguration {
-    private static final String BASE_URL = "http://10.10.14.29:8090/";
-    public static final int TIMEOUT = 1000;
+public class WebClientService {
+    @Value("${webclient.base_url}")
+    private String BASE_URL;
+    public final int TIMEOUT = 10000;
 
     @Bean
     public WebClient webClientWithTimeout() {
-        final var tcpClient = TcpClient
+        final TcpClient tcpClient = TcpClient
                 .create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
                 .doOnConnected(connection -> {

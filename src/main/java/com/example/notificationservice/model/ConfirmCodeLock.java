@@ -1,14 +1,9 @@
 package com.example.notificationservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -16,18 +11,17 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConfirmationCode {
+public class ConfirmCodeLock {
 
     @Id
     @EqualsAndHashCode.Exclude
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID codeId;
-    private String code;
-    private String codeType;
-    private String personContact;
+    private UUID lockId;
     private UUID userId;
-    private LocalDateTime sendTime;
-    private boolean lockCode;
-
+    private String lockTime;
+    private String codeType;
+    @OneToOne
+    @JoinColumn(name = "code_id")
+    private ConfirmationCode confirmationCode;
 }
