@@ -44,12 +44,12 @@ public class ConfirmationCodeService {
     if (!lock) {
       return "false";
     }
-    var userContacts = userService.getUserByIdSync(codeRequestDto.getUserId());
     var newCode = generateCode();
     if (codeRequestDto.getCodeType().equals("basic")) {
       saveCode(newCode, codeRequestDto.getCodeType(), null, codeRequestDto.getUserId());
       return newCode;
     } else {
+      var userContacts = userService.getUserByIdSync(codeRequestDto.getUserId());
       var sender = sendersFactory.getSender(codeRequestDto.getCodeType());
       sender.sendNotification(userContacts.getEmail(), codeRequestDto.getSubject(), newCode);
       saveCode(
