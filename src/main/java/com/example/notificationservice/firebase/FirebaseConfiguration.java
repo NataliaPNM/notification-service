@@ -12,16 +12,15 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class FirebaseConfiguration {
 
-    @SneakyThrows
-    @Bean
-    public FirebaseMessaging firebaseMessaging() {
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());
-        FirebaseOptions firebaseOptions = FirebaseOptions
-                .builder()
-                .setCredentials(googleCredentials)
-                .build();
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-apps");
-        return FirebaseMessaging.getInstance(app);
-    }
+  @SneakyThrows
+  @Bean
+  public FirebaseMessaging firebaseMessaging() {
+    GoogleCredentials googleCredentials =
+        GoogleCredentials.fromStream(
+            new ClassPathResource("firebase-service-account.json").getInputStream());
+    FirebaseOptions firebaseOptions =
+        FirebaseOptions.builder().setCredentials(googleCredentials).build();
+    FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-apps");
+    return FirebaseMessaging.getInstance(app);
+  }
 }

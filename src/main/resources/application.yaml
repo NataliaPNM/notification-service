@@ -1,6 +1,4 @@
 server:
-  error:
-    include-stacktrace: never
   port: 9090
 
 ---
@@ -47,19 +45,6 @@ eureka:
     hostname: 10.10.14.29
     prefer-ip-address: true
 
-
-#eureka:
-#  client:
-#    fetch-registry: true
-#    register-with-eureka: true
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka
-
-# slcadmocweblqndu
-#  instance:
-#    hostname: 10.10.14.29
-#    prefer-ip-address: true
-#
 #spring:
 #  config:
 #    import: optional:configserver:http://10.10.14.29:8087

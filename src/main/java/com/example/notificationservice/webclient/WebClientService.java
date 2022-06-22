@@ -15,23 +15,25 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebClientService {
-    @Value("${webclient.base_url}")
-    private String BASE_URL;
-    public final int TIMEOUT = 10000;
+  public final int TIMEOUT = 10000;
+  @Value("${webclient.base_url}")
+  private String BASE_URL;
 
-    @Bean
-    public WebClient webClientWithTimeout() {
-        final TcpClient tcpClient = TcpClient
-                .create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
-                .doOnConnected(connection -> {
-                    connection.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
-                    connection.addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
+  @Bean
+  public WebClient webClientWithTimeout() {
+    final TcpClient tcpClient =
+        TcpClient.create()
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
+            .doOnConnected(
+                connection -> {
+                  connection.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
+                  connection.addHandlerLast(
+                      new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
                 });
 
-        return WebClient.builder()
-                .baseUrl(BASE_URL)
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
-                .build();
-    }
+    return WebClient.builder()
+        .baseUrl(BASE_URL)
+        .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
+        .build();
+  }
 }

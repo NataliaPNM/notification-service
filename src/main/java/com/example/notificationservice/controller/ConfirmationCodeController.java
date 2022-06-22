@@ -1,6 +1,6 @@
 package com.example.notificationservice.controller;
 
-import com.example.notificationservice.dto.ConfirmDto;
+import com.example.notificationservice.dto.ConfirmCodeDto;
 import com.example.notificationservice.dto.ConfirmationCodeRequestDto;
 import com.example.notificationservice.service.ConfirmationCodeService;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +16,18 @@ import java.io.IOException;
 @RefreshScope
 public class ConfirmationCodeController {
 
-    private final ConfirmationCodeService confirmationCodeService;
+  private final ConfirmationCodeService confirmationCodeService;
 
-    @PostMapping("/sendCode")
-    public String sendCode(@RequestBody ConfirmationCodeRequestDto codeRequestDto) throws IOException {
+  @PostMapping("/sendCode")
+  public String sendCode(@RequestBody ConfirmationCodeRequestDto codeRequestDto)
+      throws IOException {
 
-        return confirmationCodeService.sendCode(codeRequestDto);
-    }
-    @PostMapping("/confirm")
-    public String confirmCode(@RequestBody ConfirmDto confirmDto){
+    return confirmationCodeService.sendCode(codeRequestDto);
+  }
 
-        return confirmationCodeService.confirmCode(confirmDto);
-    }
+  @PostMapping("/confirm")
+  public boolean confirmCode(@RequestBody ConfirmCodeDto confirmCodeDto) {
 
+    return confirmationCodeService.confirmCode(confirmCodeDto);
+  }
 }
-

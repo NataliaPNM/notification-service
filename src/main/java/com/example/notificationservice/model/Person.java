@@ -8,9 +8,10 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    private UUID id;
-    private String email;
-    private Long phone;
-    private String deviceToken;
+public class Person {
+  private UUID id;
+  private String email;
+  private Long phone;
+  private String login;
+  private String deviceToken;
 }

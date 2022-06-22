@@ -1,5 +1,6 @@
 package com.example.notificationservice.senders;
 
+import com.example.notificationservice.exception.IncorrectCodeTypeException;
 import com.example.notificationservice.senders.impl.EmailSender;
 import com.example.notificationservice.senders.impl.PushSender;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class SendersFactory {
         return switch (type) {
             case "email" -> emailSender;
             case "push" -> pushSender;
-            default -> null;
+            default -> throw new IncorrectCodeTypeException("incorrect code type");
         };
     }
 }

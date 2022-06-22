@@ -11,49 +11,49 @@ import java.util.Properties;
 @Configuration
 public class EmailSenderConfiguration {
 
-    @Value("${email.sender.host}")
-    private String host;
+  @Value("${email.sender.host}")
+  private String host;
 
-    @Value("${email.sender.port}")
-    private String port;
+  @Value("${email.sender.port}")
+  private String port;
 
-    @Value("${email.sender.username}")
-    private String username;
+  @Value("${email.sender.username}")
+  private String username;
 
-    @Value("${email.sender.password}")
-    private String password;
+  @Value("${email.sender.password}")
+  private String password;
 
-    @Value("${email.transport.protocol}")
-    private String protocol;
+  @Value("${email.transport.protocol}")
+  private String protocol;
 
-    @Value("${email.smtp.auth}")
-    private String auth;
+  @Value("${email.smtp.auth}")
+  private String auth;
 
-    @Value("${email.smtp.starttls.enable}")
-    private String ttlsEnable;
+  @Value("${email.smtp.starttls.enable}")
+  private String ttlsEnable;
 
-    @Value("${email.debug}")
-    private String debug;
+  @Value("${email.debug}")
+  private String debug;
 
-    @Bean
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setPort(Integer.parseInt(port));
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
-        mailSender.setJavaMailProperties(getMailSenderProperties());
+  @Bean
+  public JavaMailSender getJavaMailSender() {
+    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+    mailSender.setHost(host);
+    mailSender.setPort(Integer.parseInt(port));
+    mailSender.setUsername(username);
+    mailSender.setPassword(password);
+    mailSender.setJavaMailProperties(getMailSenderProperties());
 
-        return mailSender;
-    }
+    return mailSender;
+  }
 
-    private Properties getMailSenderProperties() {
-        Properties props = new Properties();
-        props.put("mail.transport.protocol", protocol);
-        props.put("mail.smtp.auth", auth);
-        props.put("mail.smtp.starttls.enable", ttlsEnable);
-        props.put("mail.debug", debug);
+  private Properties getMailSenderProperties() {
+    Properties props = new Properties();
+    props.put("mail.transport.protocol", protocol);
+    props.put("mail.smtp.auth", auth);
+    props.put("mail.smtp.starttls.enable", ttlsEnable);
+    props.put("mail.debug", debug);
 
-        return props;
-    }
+    return props;
+  }
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class ConfirmationCodeRequestDto {
-    private String codeType;
-    private String subject;
-    private UUID userId;
+  private String codeType;
+  private String subject;
+  private UUID userId;
 }

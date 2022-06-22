@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ConfirmDto {
-    private String confirmationCode;
-    private UUID userId;
+public class ConfirmCodeDto {
+  private String confirmationCode;
+  private UUID userId;
 }

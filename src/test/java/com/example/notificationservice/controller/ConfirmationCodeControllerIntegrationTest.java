@@ -1,6 +1,7 @@
-package com.example.notificationservice;
+package com.example.notificationservice.controller;
 
-import com.example.notificationservice.dto.ConfirmDto;
+import com.example.notificationservice.Fixtures;
+import com.example.notificationservice.dto.ConfirmCodeDto;
 import com.example.notificationservice.dto.ConfirmationCodeRequestDto;
 import com.example.notificationservice.service.ConfirmationCodeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,10 +34,9 @@ class ConfirmationCodeControllerIntegrationTest {
 
     @Test
     void sendCodeStatusOkTest() throws Exception {
-        ConfirmationCodeRequestDto confirmationCodeRequestDto = new ConfirmationCodeRequestDto();
-        confirmationCodeRequestDto.setCodeType("email");
-        confirmationCodeRequestDto.setUserId(UUID.fromString("f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454"));
-        when(confirmationCodeService.sendCode(confirmationCodeRequestDto)).thenReturn("Sent message successfully....");
+        ConfirmationCodeRequestDto confirmationCodeRequestDto = Fixtures.getConfirmationCodeRequestDto("email","code", UUID.fromString("f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454"));
+
+        when(confirmationCodeService.sendCode(confirmationCodeRequestDto)).thenReturn("true");
         mockMvc
                 .perform(
                         post("/msg/sendCode")
@@ -46,25 +46,23 @@ class ConfirmationCodeControllerIntegrationTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("Sent message successfully...."));
+                .andExpect(content().string("true"));
     }
 
     @Test
     void confirmCodeStatusOkTest() throws Exception {
-        ConfirmDto confirmDto = new ConfirmDto();
-        confirmDto.setConfirmationCode("1234");
-        confirmDto.setUserId(UUID.fromString("f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454"));
+        ConfirmCodeDto confirmCodeDto = Fixtures.getConfirmDto("1234",UUID.fromString("f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454"));
 
-        when(confirmationCodeService.confirmCode(confirmDto)).thenReturn("code confirm!");
+        when(confirmationCodeService.confirmCode(confirmCodeDto)).thenReturn(true);
         mockMvc
                 .perform(
                         post("/msg/confirm")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(confirmDto))
+                                .content(mapper.writeValueAsString(confirmCodeDto))
                                 .characterEncoding("utf-8")
                                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("code confirm!"));
+                .andExpect(content().string("true"));
     }
 }
