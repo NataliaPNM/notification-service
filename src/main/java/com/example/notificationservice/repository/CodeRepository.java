@@ -3,11 +3,13 @@ package com.example.notificationservice.repository;
 import com.example.notificationservice.model.ConfirmationCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface CodeRepository  extends JpaRepository<ConfirmationCode, UUID> {
-    Optional<ConfirmationCode> findByUserId(UUID userId);
+public interface CodeRepository extends JpaRepository<ConfirmationCode, UUID> {
+
+  Optional<ConfirmationCode> findByUserIdAndCodeType(UUID userId, String codeType);
+
+  Optional<ConfirmationCode> findByUserIdAndLockCode(UUID userId, boolean lockCode);
 }
