@@ -131,9 +131,7 @@ public class ConfirmationCodeService {
               .build());
       LOCK_NUMBER++;
       ATTEMPTS_COUNT = 5;
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST,
-          "Attempts are used up, try sending the code again via " + lockTime + " minutes");
+      throw new IncorrectCodeException(ATTEMPTS_COUNT+","+lockTime);
     }
     throw new IncorrectCodeException(String.valueOf(ATTEMPTS_COUNT));
   }

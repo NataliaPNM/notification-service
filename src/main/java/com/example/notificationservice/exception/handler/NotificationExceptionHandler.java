@@ -21,7 +21,12 @@ public class NotificationExceptionHandler extends ResponseEntityExceptionHandler
   protected ResponseEntity<Object> handleIncorrectCodeException(
       IncorrectCodeException ex, WebRequest request) {
     Map<String, String> body = new HashMap<>();
-    body.put("countOfAttemts", ex.getMessage());
+    String[] s = ex.getMessage().split(",");
+    body.put("countOfAttemts", s[0]);
+    if(s.length==2){
+      body.put("lockTime",s[1]);
+      body.put("countOfAttemts", "0");
+    }
     body.put("status", "400");
     body.put("error", "BAD_REQUEST");
     return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
