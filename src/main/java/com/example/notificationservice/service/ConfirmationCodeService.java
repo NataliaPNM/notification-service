@@ -20,7 +20,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -74,7 +73,6 @@ public class ConfirmationCodeService {
               }
             });
   }
-
   public void sendCode(NotificationRequestEvent notificationRequestEvent) throws IOException {
     updateCodeRepository(notificationRequestEvent.getPersonId());
     updateCode(notificationRequestEvent.getOperationId(), notificationRequestEvent.getType());
