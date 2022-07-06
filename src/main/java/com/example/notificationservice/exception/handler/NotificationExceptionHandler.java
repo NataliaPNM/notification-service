@@ -1,8 +1,6 @@
 package com.example.notificationservice.exception.handler;
 
-import com.example.notificationservice.exception.CodeLockException;
-import com.example.notificationservice.exception.IncorrectCodeException;
-import com.example.notificationservice.exception.IncorrectCodeTypeException;
+import com.example.notificationservice.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,38 +14,59 @@ import java.util.Map;
 
 @ControllerAdvice
 public class NotificationExceptionHandler extends ResponseEntityExceptionHandler {
+  private static final String STATUS = "status";
+  private static final String ERROR = "error";
+  private static final String MESSAGE = "message";
+  private final Map<String, String> body = new HashMap<>();
 
   @ExceptionHandler(value = {IncorrectCodeException.class})
   protected ResponseEntity<Object> handleIncorrectCodeException(
       IncorrectCodeException ex, WebRequest request) {
-    Map<String, String> body = new HashMap<>();
-    String[] s = ex.getMessage().split(",");
-    body.put("countOfAttemts", s[0]);
-    if(s.length==2){
-      body.put("lockTime",s[1]);
-      body.put("countOfAttemts", "0");
-    }
-    body.put("status", "400");
-    body.put("error", "BAD_REQUEST");
+    body.clear();
+    body.put("countOfAttempts", ex.getMessage());
+    body.put(STATUS, "400");
+    body.put(ERROR, "BAD_REQUEST");
     return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
   }
 
   @ExceptionHandler(value = {CodeLockException.class})
   protected ResponseEntity<Object> handleLockException(CodeLockException ex, WebRequest request) {
-    Map<String, String> body = new HashMap<>();
+    body.clear();
     body.put("lockTime", ex.getMessage());
-    body.put("status", "423");
-    body.put("error", "LOCKED");
+    body.put(STATUS, "423");
+    body.put(ERROR, "LOCKED");
     return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.LOCKED, request);
   }
 
   @ExceptionHandler(value = {IncorrectCodeTypeException.class})
   protected ResponseEntity<Object> handleIncorrectCodeTypeException(
       IncorrectCodeTypeException ex, WebRequest request) {
-    Map<String, String> body = new HashMap<>();
-    body.put("status", "400");
-    body.put("error", "BAD_REQUEST");
-    body.put("message", ex.getMessage());
-    return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    body.clear();
+    body.put(STATUS, "422");
+    body.put(ERROR, "Unprocessable Entity");
+    body.put(MESSAGE, ex.getMessage());
+    return handleExceptionInternal(
+        ex, body, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+  }
+
+  @ExceptionHandler(value = {ConfirmationCodeExpiredException.class})
+  protected ResponseEntity<Object> handleConfirmationCodeExpiredException(
+      ConfirmationCodeExpiredException ex, WebRequest request) {
+    body.clear();
+    body.put(STATUS, "408");
+    body.put(ERROR, "Request Timeout");
+    body.put(MESSAGE, ex.getMessage());
+    return handleExceptionInternal(
+        ex, body, new HttpHeaders(), HttpStatus.REQUEST_TIMEOUT, request);
+  }
+
+  @ExceptionHandler(value = {IncorrectOperationIdException.class})
+  protected ResponseEntity<Object> handleIncorrectOperationIdException(
+      IncorrectOperationIdException ex, WebRequest request) {
+    body.clear();
+    body.put(STATUS, "404");
+    body.put(ERROR, "Not found");
+    body.put(MESSAGE, ex.getMessage());
+    return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
   }
 }
