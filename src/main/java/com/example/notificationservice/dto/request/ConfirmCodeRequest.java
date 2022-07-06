@@ -1,4 +1,4 @@
-package com.example.notificationservice.dto;
+package com.example.notificationservice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ConfirmationCodeRequestDto {
-  private String codeType;
-  private String subject;
-  private UUID userId;
+public class ConfirmCodeRequest {
+  private String confirmationCode;
+  private UUID operationId;
+  private String type;
 }

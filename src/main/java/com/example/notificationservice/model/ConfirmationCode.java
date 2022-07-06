@@ -1,10 +1,6 @@
 package com.example.notificationservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -26,10 +22,13 @@ public class ConfirmationCode {
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   private UUID codeId;
 
+  private UUID personId;
+  private UUID operationId;
   private String code;
   private String codeType;
   private String personContact;
-  private UUID userId;
+  private String source;
   private LocalDateTime sendTime;
   private boolean lockCode;
+  private LocalDateTime lockTime;
 }

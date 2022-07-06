@@ -21,6 +21,7 @@ public class FirebaseConfiguration {
     FirebaseOptions firebaseOptions =
         FirebaseOptions.builder().setCredentials(googleCredentials).build();
     FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-apps");
+
     return FirebaseMessaging.getInstance(app);
   }
 }

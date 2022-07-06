@@ -1,2 +1,2 @@
-# notification-service
+# notificationRequestDto-service
 

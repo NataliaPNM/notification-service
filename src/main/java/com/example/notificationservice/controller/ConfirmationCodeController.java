@@ -1,10 +1,12 @@
 package com.example.notificationservice.controller;
 
-import com.example.notificationservice.dto.ConfirmCodeDto;
-import com.example.notificationservice.dto.ConfirmationCodeRequestDto;
+import com.example.notificationservice.dto.request.ConfirmCodeRequest;
+import com.example.notificationservice.dto.request.ResentCodeRequest;
+import com.example.notificationservice.dto.response.CodeConfirmationResponse;
 import com.example.notificationservice.service.ConfirmationCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -18,16 +20,16 @@ public class ConfirmationCodeController {
 
   private final ConfirmationCodeService confirmationCodeService;
 
-  @PostMapping("/sendCode")
-  public String sendCode(@RequestBody ConfirmationCodeRequestDto codeRequestDto)
-      throws IOException {
+  @PostMapping("/resentСode")
+  public String resentCode(@RequestBody ResentCodeRequest codeRequestDto) throws IOException {
 
-    return confirmationCodeService.sendCode(codeRequestDto);
+    return confirmationCodeService.resentCode(codeRequestDto);
   }
 
   @PostMapping("/confirm")
-  public boolean confirmCode(@RequestBody ConfirmCodeDto confirmCodeDto) {
-
-    return confirmationCodeService.confirmCode(confirmCodeDto);
+  public ResponseEntity<CodeConfirmationResponse> confirmCode(
+      @RequestBody ConfirmCodeRequest confirmCodeRequest) {
+    var body = confirmationCodeService.confirmCode(confirmCodeRequest);
+    return ResponseEntity.status(body.getStatus()).body(body);
   }
 }

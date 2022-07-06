@@ -1,25 +1,8 @@
 spring:
   application:
     name: notification-service
-  profiles:
-    active: native
   config:
     import: optional:configserver:http://10.10.14.29:8087/
-email:
-  from:
-    address: green.bank@yandex.ru
-  sender:
-    username: green.bank
-    port: '465'
-    host: smtp.yandex.ru
-    password: dyycawyabbskxwme
-  debug: 'true'
-  smtp:
-    starttls:
-      enable: 'true'
-    auth: 'true'
-  transport:
-    protocol: smtps
 
-webclient:
-  base_url: http://10.10.14.29:8090/
+
+
