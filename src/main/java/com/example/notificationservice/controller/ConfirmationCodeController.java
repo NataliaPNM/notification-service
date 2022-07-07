@@ -13,14 +13,14 @@ import java.io.IOException;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("msg")
+@RequestMapping("/msg")
 @RequiredArgsConstructor
 @RefreshScope
 public class ConfirmationCodeController {
 
   private final ConfirmationCodeService confirmationCodeService;
 
-  @PostMapping("/resentСode")
+  @PostMapping("/resent")
   public String resentCode(@RequestBody ResentCodeRequest codeRequestDto) throws IOException {
 
     return confirmationCodeService.resentCode(codeRequestDto);
