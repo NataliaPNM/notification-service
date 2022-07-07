@@ -96,8 +96,7 @@ public class ConfirmationCodeService {
 
       if (code.get().getLockTime().isAfter(LocalDateTime.now())) {
         throw new CodeLockException(
-            String.valueOf(
-                ChronoUnit.MINUTES.between(LocalDateTime.now(), code.get().getLockTime()) + 1));
+            String.valueOf(code.get().getLockTime()));
       } else if (code.get().getLockTime().isBefore(LocalDateTime.now())) {
         codeRepository.delete(code.get());
         LOCK_SET = 0;

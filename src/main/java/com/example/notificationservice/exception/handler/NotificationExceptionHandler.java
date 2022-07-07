@@ -31,10 +31,10 @@ public class NotificationExceptionHandler extends ResponseEntityExceptionHandler
 
   @ExceptionHandler(value = {CodeLockException.class})
   protected ResponseEntity<Object> handleLockException(CodeLockException ex, WebRequest request) {
-    body.clear();
-    body.put("lockTime", ex.getMessage());
-    body.put(STATUS, "423");
-    body.put(ERROR, "LOCKED");
+    Map<String, String> body = new HashMap<>();
+    body.put("status", "423");
+    body.put("error", "Locked");
+    body.put("unlockTime", ex.getMessage());
     return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.LOCKED, request);
   }
 
