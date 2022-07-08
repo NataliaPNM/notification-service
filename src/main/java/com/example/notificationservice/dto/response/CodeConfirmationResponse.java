@@ -13,5 +13,5 @@ import org.springframework.http.HttpStatus;
 public class CodeConfirmationResponse {
   private HttpStatus status;
   private String message;
-  private String lockTime;
+  private String unlockTime;
 }

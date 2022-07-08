@@ -15,7 +15,7 @@ public interface CodeRepository extends JpaRepository<ConfirmationCode, UUID> {
 
   Optional<ConfirmationCode> findByOperationIdAndLockCode(UUID operationId, boolean lockCode);
 
-  Optional<ConfirmationCode> findByPersonId(UUID personId);
+  List<Optional<ConfirmationCode>> findByPersonId(UUID personId);
 
   Optional<ConfirmationCode> findByOperationIdAndCodeType(UUID operationId, String codeType);
 }

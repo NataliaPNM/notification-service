@@ -20,6 +20,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -63,16 +64,17 @@ public class ConfirmationCodeService {
   }
 
   public void updateCodeRepository(UUID personId) {
-    codeRepository
-        .findByPersonId(personId)
-        .ifPresent(
-            (c) -> {
-              // когда все нормально сделаю в этом методе не будет нужды
-              if (c.getSendTime().plusHours(1L).isBefore(LocalDateTime.now())) {
-                codeRepository.delete(c);
-              }
-            });
+    var codes = codeRepository.findByPersonId(personId);
+    for (Optional<ConfirmationCode> code : codes) {
+      code.ifPresent(
+          c -> {
+            if (c.getSendTime().plusHours(1L).isBefore(LocalDateTime.now())) {
+              codeRepository.delete(c);
+            }
+          });
+    }
   }
+
   public void sendCode(NotificationRequestEvent notificationRequestEvent) throws IOException {
     updateCodeRepository(notificationRequestEvent.getPersonId());
     updateCode(notificationRequestEvent.getOperationId(), notificationRequestEvent.getType());
@@ -95,8 +97,7 @@ public class ConfirmationCodeService {
     if (code.isPresent() && code.get().isLockCode()) {
 
       if (code.get().getLockTime().isAfter(LocalDateTime.now())) {
-        throw new CodeLockException(
-            String.valueOf(code.get().getLockTime()));
+        throw new CodeLockException(String.valueOf(code.get().getLockTime()));
       } else if (code.get().getLockTime().isBefore(LocalDateTime.now())) {
         codeRepository.delete(code.get());
         LOCK_SET = 0;
@@ -113,23 +114,26 @@ public class ConfirmationCodeService {
       codeRepository.delete(code);
       throw new ConfirmationCodeExpiredException("Code not valid");
     }
-    if (code.getCode().equals(confirmCodeRequest.getConfirmationCode())&&code.getSendTime().plusMinutes(5L).isBefore(LocalDateTime.now())){
-        codeRepository.delete(code);
-        throw new ConfirmationCodeExpiredException("Code not valid");
-      }
-
+    if (code.getCode().equals(confirmCodeRequest.getConfirmationCode())
+        && code.getSendTime().plusMinutes(5L).isBefore(LocalDateTime.now())) {
+      codeRepository.delete(code);
+      throw new ConfirmationCodeExpiredException("Code not valid");
+    }
   }
-
+  @Transactional
   public CodeConfirmationResponse countIncorrectAttempts(ConfirmationCode code) {
     ATTEMPTS_COUNT--;
     if (ATTEMPTS_COUNT == 0) {
       var lockTime = DEFAULT_LOCK_MINUTES + LOCK_SET * 15;
       code.setLockCode(true);
       code.setLockTime(LocalDateTime.now().plusMinutes(lockTime));
-
+      codeRepository.save(code);
+//      var t =
+//          ChronoUnit.MILLIS.between(codeRepository.save(code).getLockTime(), LocalDateTime.now());
+//      System.out.println(t);
       LOCK_SET++;
       ATTEMPTS_COUNT = 5;
-      codeRepository.save(code);
+      // codeRepository.save(code);
 
       return updatePersonLocks(code);
     }
@@ -148,7 +152,7 @@ public class ConfirmationCodeService {
       } else if (codeLock.isPresent() && codeLock.get().getCodeType().equals("push")) {
         pushLock = true;
       }
-      if (codeLock.isPresent()&&codeLock.get().getLockTime().isBefore(minTime)) {
+      if (codeLock.isPresent() && codeLock.get().getLockTime().isBefore(minTime)) {
         minTime = codeLock.get().getLockTime();
       }
     }
@@ -190,7 +194,7 @@ public class ConfirmationCodeService {
 
     switch (status) {
       case "confirm":
-        ATTEMPTS_COUNT=5;
+        ATTEMPTS_COUNT = 5;
         codeRepository.delete(code);
         return CodeConfirmationResponse.builder()
             .status(HttpStatus.OK)
@@ -200,13 +204,13 @@ public class ConfirmationCodeService {
         return CodeConfirmationResponse.builder()
             .status(HttpStatus.LOCKED)
             .message("Choose another confirmation type")
-            .lockTime(code.getLockTime().toString())
+            .unlockTime(code.getLockTime().toString())
             .build();
       case "fullLock":
         return CodeConfirmationResponse.builder()
             .status(HttpStatus.FORBIDDEN)
             .message("All confirmation ways locked")
-            .lockTime(lockTime)
+            .unlockTime(lockTime)
             .build();
       default:
         throw new IllegalStateException("Unexpected value: " + status);
