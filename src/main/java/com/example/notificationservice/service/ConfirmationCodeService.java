@@ -97,7 +97,7 @@ public class ConfirmationCodeService {
     if (code.isPresent() && code.get().isLockCode()) {
 
       if (code.get().getLockTime().isAfter(LocalDateTime.now())) {
-        throw new CodeLockException(String.valueOf(code.get().getLockTime()));
+        throw new CodeLockException(getUnlockTimeInMs(code.get().getLockTime()));
       } else if (code.get().getLockTime().isBefore(LocalDateTime.now())) {
         codeRepository.delete(code.get());
         LOCK_SET = 0;
@@ -109,7 +109,7 @@ public class ConfirmationCodeService {
   // после рефакторинга будет не нужен
   public void checkCodeInput(ConfirmationCode code, ConfirmCodeRequest confirmCodeRequest) {
     if (code.isLockCode() && code.getLockTime().isAfter(LocalDateTime.now())) {
-      throw new CodeLockException(code.getLockTime().toString());
+      throw new CodeLockException(getUnlockTimeInMs(code.getLockTime()));
     } else if (code.isLockCode() && code.getLockTime().isBefore(LocalDateTime.now())) {
       codeRepository.delete(code);
       throw new ConfirmationCodeExpiredException("Code not valid");
@@ -120,6 +120,7 @@ public class ConfirmationCodeService {
       throw new ConfirmationCodeExpiredException("Code not valid");
     }
   }
+
   @Transactional
   public CodeConfirmationResponse countIncorrectAttempts(ConfirmationCode code) {
     ATTEMPTS_COUNT--;
@@ -128,12 +129,9 @@ public class ConfirmationCodeService {
       code.setLockCode(true);
       code.setLockTime(LocalDateTime.now().plusMinutes(lockTime));
       codeRepository.save(code);
-//      var t =
-//          ChronoUnit.MILLIS.between(codeRepository.save(code).getLockTime(), LocalDateTime.now());
-//      System.out.println(t);
       LOCK_SET++;
       ATTEMPTS_COUNT = 5;
-      // codeRepository.save(code);
+
 
       return updatePersonLocks(code);
     }
@@ -161,6 +159,11 @@ public class ConfirmationCodeService {
     }
     return sendOperationConfirmEvent(
         code.getOperationId(), code, "lock", code.getLockTime().toString());
+  }
+
+  public String getUnlockTimeInMs(LocalDateTime to) {
+
+    return String.valueOf(ChronoUnit.MILLIS.between(LocalDateTime.now(), to));
   }
 
   @Transactional
@@ -201,16 +204,17 @@ public class ConfirmationCodeService {
             .message("Operation confirm")
             .build();
       case "lock":
+
         return CodeConfirmationResponse.builder()
             .status(HttpStatus.LOCKED)
             .message("Choose another confirmation type")
-            .unlockTime(code.getLockTime().toString())
+            .unlockTime(getUnlockTimeInMs(code.getLockTime()))
             .build();
       case "fullLock":
         return CodeConfirmationResponse.builder()
             .status(HttpStatus.FORBIDDEN)
             .message("All confirmation ways locked")
-            .unlockTime(lockTime)
+            .unlockTime(getUnlockTimeInMs(LocalDateTime.parse(lockTime)))
             .build();
       default:
         throw new IllegalStateException("Unexpected value: " + status);
