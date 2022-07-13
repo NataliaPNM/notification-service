@@ -5,10 +5,7 @@ import com.example.notificationservice.dto.request.NotificationRequestEvent;
 import com.example.notificationservice.dto.request.OperationConfirmEvent;
 import com.example.notificationservice.dto.request.ResentCodeRequest;
 import com.example.notificationservice.dto.response.CodeConfirmationResponse;
-import com.example.notificationservice.exception.CodeLockException;
-import com.example.notificationservice.exception.ConfirmationCodeExpiredException;
-import com.example.notificationservice.exception.IncorrectCodeException;
-import com.example.notificationservice.exception.IncorrectOperationIdException;
+import com.example.notificationservice.exception.*;
 import com.example.notificationservice.model.ConfirmationCode;
 import com.example.notificationservice.repository.CodeRepository;
 import com.example.notificationservice.senders.SendersFactory;
@@ -44,6 +41,9 @@ public class ConfirmationCodeService {
   }
 
   public String resentCode(ResentCodeRequest resentCodeRequest) throws IOException {
+    if(!resentCodeRequest.getType().equals("email") && !resentCodeRequest.getType().equals("push")){
+      throw new IncorrectCodeTypeException("Incorrect confirmation type");
+    }
     var code =
         getConfirmationCode(resentCodeRequest.getOperationId(), resentCodeRequest.getType())
             .orElseThrow(
@@ -63,20 +63,17 @@ public class ConfirmationCodeService {
     return code.getPersonContact();
   }
 
-  public void updateCodeRepository(UUID personId) {
-    var codes = codeRepository.findByPersonId(personId);
-    for (Optional<ConfirmationCode> code : codes) {
-      code.ifPresent(
-          c -> {
-            if (c.getSendTime().plusHours(1L).isBefore(LocalDateTime.now())) {
-              codeRepository.delete(c);
-            }
-          });
+  public void updateCodeRepository() {
+    var codes = codeRepository.findAll();
+    for (ConfirmationCode code : codes) {
+      if (code.getSendTime().plusHours(1L).isBefore(LocalDateTime.now())) {
+        codeRepository.delete(code);
+      }
     }
   }
 
   public void sendCode(NotificationRequestEvent notificationRequestEvent) throws IOException {
-    updateCodeRepository(notificationRequestEvent.getPersonId());
+    updateCodeRepository();
     updateCode(notificationRequestEvent.getOperationId(), notificationRequestEvent.getType());
 
     var newCode = generateCode();
@@ -168,6 +165,9 @@ public class ConfirmationCodeService {
 
   @Transactional
   public CodeConfirmationResponse confirmCode(ConfirmCodeRequest confirmCodeRequest) {
+    if(!confirmCodeRequest.getType().equals("email") && !confirmCodeRequest.getType().equals("push")){
+      throw new IncorrectCodeTypeException("Incorrect confirmation type");
+    }
     var code =
         getConfirmationCode(confirmCodeRequest.getOperationId(), confirmCodeRequest.getType())
             .orElseThrow(
@@ -254,7 +254,7 @@ public class ConfirmationCodeService {
   @KafkaListener(topics = "delete-code-request", groupId = "send-notification")
   @Transactional
   public void listenDeleteCodeRequestTopic(
-      ConsumerRecord<String, NotificationRequestEvent> consumerRecord) throws IOException {
+      ConsumerRecord<String, NotificationRequestEvent> consumerRecord){
     var notificationRequest = consumerRecord.value();
     deleteCode(notificationRequest);
   }
