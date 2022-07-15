@@ -5,6 +5,7 @@ import com.example.notificationservice.dto.request.NotificationRequestEvent;
 import com.example.notificationservice.dto.request.OperationConfirmEvent;
 import com.example.notificationservice.dto.request.ResentCodeRequest;
 import com.example.notificationservice.dto.response.CodeConfirmationResponse;
+import com.example.notificationservice.dto.response.ResentCodeResponse;
 import com.example.notificationservice.exception.*;
 import com.example.notificationservice.model.ConfirmationCode;
 import com.example.notificationservice.repository.CodeRepository;
@@ -40,7 +41,7 @@ public class ConfirmationCodeService {
     return String.valueOf(randomCode);
   }
 
-  public String resentCode(ResentCodeRequest resentCodeRequest) throws IOException {
+  public ResentCodeResponse resentCode(ResentCodeRequest resentCodeRequest) throws IOException {
     if(!resentCodeRequest.getType().equals("email") && !resentCodeRequest.getType().equals("push")){
       throw new IncorrectCodeTypeException("Incorrect confirmation type");
     }
@@ -60,7 +61,7 @@ public class ConfirmationCodeService {
         code.getPersonContact(),
         resentCodeRequest.getOperationId(),
         code.getSource());
-    return code.getPersonContact();
+    return ResentCodeResponse.builder().personContact(code.getPersonContact()).build();
   }
 
   public void updateCodeRepository() {

@@ -3,6 +3,7 @@ package com.example.notificationservice.controller;
 import com.example.notificationservice.dto.request.ConfirmCodeRequest;
 import com.example.notificationservice.dto.request.ResentCodeRequest;
 import com.example.notificationservice.dto.response.CodeConfirmationResponse;
+import com.example.notificationservice.dto.response.ResentCodeResponse;
 import com.example.notificationservice.service.ConfirmationCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,7 +22,7 @@ public class ConfirmationCodeController {
   private final ConfirmationCodeService confirmationCodeService;
 
   @PostMapping("/resent")
-  public String resentCode(@RequestBody ResentCodeRequest codeRequestDto) throws IOException {
+  public ResentCodeResponse resentCode(@RequestBody ResentCodeRequest codeRequestDto) throws IOException {
 
     return confirmationCodeService.resentCode(codeRequestDto);
   }
