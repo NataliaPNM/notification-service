@@ -21,7 +21,7 @@ public class ConfirmationCodeController {
 
   private final ConfirmationCodeService confirmationCodeService;
 
-  @PostMapping("/resent")
+  @PostMapping("/resend")
   public ResentCodeResponse resentCode(@RequestBody ResentCodeRequest codeRequestDto) throws IOException {
 
     return confirmationCodeService.resentCode(codeRequestDto);
