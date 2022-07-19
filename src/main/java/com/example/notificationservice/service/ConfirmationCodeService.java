@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -155,6 +156,7 @@ public class ConfirmationCodeService {
     if (emailLock && pushLock) {
       sendOperationConfirmEvent(code.getOperationId(), code, "fullLock", minTime.toString());
     }
+
     return sendOperationConfirmEvent(
         code.getOperationId(), code, "lock", code.getLockTime().toString());
   }
@@ -244,7 +246,7 @@ public class ConfirmationCodeService {
     codeRepository.save(confirmationCode);
   }
 
-  @KafkaListener(topics = "notification-request", groupId = "send-notification")
+  @KafkaListener(topics = "notification-request", groupId = "send-notification",containerFactory = "kafkaListenerContainerFactory")
   @Transactional
   public void listenNotificationRequest(
       ConsumerRecord<String, NotificationRequestEvent> consumerRecord) throws IOException {

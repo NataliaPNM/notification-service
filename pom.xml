@@ -59,6 +59,13 @@
             <artifactId>firebase-admin</artifactId>
             <version>7.0.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.orbit/javax.mail.glassfish -->
+        <dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.mail.glassfish</artifactId>
+            <version>1.4.1.v201005082020</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>

@@ -1,6 +1,7 @@
 package com.example.notificationservice.kafka;
 
 import com.example.notificationservice.dto.request.NotificationRequestEvent;
+import com.example.notificationservice.dto.request.PasswordRecoveryNotificationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.IsolationLevel;
@@ -31,8 +32,9 @@ public class KafkaConsumerConfig {
   @Value("${spring.kafka.consumer.group-id}")
   private String kafkaGroupId;
 
-  @Bean
-  public Map<String, Object> consumerConfigs() {
+    @Bean
+    public Map<String, Object> consumerConfigs() {
+
     Map<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
@@ -47,21 +49,53 @@ public class KafkaConsumerConfig {
         IsolationLevel.READ_COMMITTED.toString().toLowerCase(Locale.ROOT));
     return props;
   }
-
   @Bean
+  public Map<String, Object> consumerConfigsForPasswordRecoveryNeeds() {
+    Map<String, Object> props = new HashMap<>();
+    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+    props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
+    props.put(JsonDeserializer.KEY_DEFAULT_TYPE, String.class);
+    props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+    props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, PasswordRecoveryNotificationRequest.class.getName());
+    props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
+    props.put(
+            ConsumerConfig.ISOLATION_LEVEL_CONFIG,
+            IsolationLevel.READ_COMMITTED.toString().toLowerCase(Locale.ROOT));
+    return props;
+  }
+
+
+  @Bean(name = "kafkaListenerContainerFactoryForPasswordRecoveryNeeds")
+  public KafkaListenerContainerFactory<?> kafkaListenerContainerFactoryForPasswordRecoveryNeeds() {
+    ConcurrentKafkaListenerContainerFactory<String, PasswordRecoveryNotificationRequest> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(consumerFactoryForPasswordRecoveryNeeds());
+
+    return factory;
+  }
+  @Bean(name = "kafkaListenerContainerFactory")
   public KafkaListenerContainerFactory<?> kafkaListenerContainerFactory() {
     ConcurrentKafkaListenerContainerFactory<String, NotificationRequestEvent> factory =
-        new ConcurrentKafkaListenerContainerFactory<>();
+            new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
 
     return factory;
   }
 
+
   @Bean
   public ConsumerFactory<String, NotificationRequestEvent> consumerFactory() {
     return new DefaultKafkaConsumerFactory<>(
-        consumerConfigs(),
-        new StringDeserializer(),
-        new JsonDeserializer<>(NotificationRequestEvent.class, false));
+        consumerConfigs(),new StringDeserializer(),
+            new JsonDeserializer<>(NotificationRequestEvent.class, false));
+  }
+  @Bean
+  public ConsumerFactory<String, PasswordRecoveryNotificationRequest> consumerFactoryForPasswordRecoveryNeeds() {
+    return new DefaultKafkaConsumerFactory<>(
+            consumerConfigsForPasswordRecoveryNeeds(),
+            new StringDeserializer(),
+            new JsonDeserializer<>(PasswordRecoveryNotificationRequest.class, false));
   }
 }
